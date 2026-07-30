@@ -119,7 +119,7 @@ const CityProvider = ({ children }: { children: React.ReactNode }) => {
     await fetch(`${BASE_URL}/cities/${id}`, {
       method: 'DELETE',
     }).then(res => {
-      res.json().then(data => {
+      res.json().then(() => {
         if (!res.ok)
           dispatch({ type: 'setError', payload: 'Failed to delete city' });
         dispatch({ type: 'deleteCity', payload: id });

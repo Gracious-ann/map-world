@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styles from '../components/CityItem.module.css';
 import ReactCountryFlag from 'react-country-flag';
 import { useCityContext } from '../contexts/CityContext';

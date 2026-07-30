@@ -17,7 +17,7 @@ import { useUrlPosition } from '../hooks/useUrlPosition';
 export default function Map() {
   const { cities } = useCityContext();
   const [mapPosition, setMapPosition] = useState<[number, number]>([40, 0]);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { lat, lng } = useUrlPosition();
   const {
     isLoading: isGeolocationLoading,
