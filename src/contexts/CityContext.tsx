@@ -1,13 +1,14 @@
 import { createContext, useContext, useEffect, useReducer } from 'react';
 import type { NewCity, City } from '../type';
+import { supabase } from '../lib/supabase';
 
 interface CityContextType {
   cities: City[];
   isLoading: boolean;
   currentCity: City | null;
   getCity: (id: string) => Promise<void>;
-  addNewCity: (newCity: NewCity) => void;
-  deleteCity: (id: string) => void;
+  addNewCity: (newCity: NewCity) => Promise<void>;
+  deleteCity: (id: string) => Promise<void>;
   error: string | null;
 }
 
@@ -53,7 +54,8 @@ function cityReducer(state: CityState, action: any): CityState {
       return state;
   }
 }
-const BASE_URL = 'http://localhost:3001';
+// const BASE_URL = 'http://localhost:3001';
+supabase.from('cities').select('*');
 
 const CityContext = createContext<CityContextType | undefined>(undefined);
 
@@ -70,10 +72,18 @@ const CityProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(function () {
     async function fetchCities() {
       dispatch({ type: 'setIsLoading' });
+
       try {
-        const res = await fetch(`${BASE_URL}/cities`);
-        const data = await res.json();
-        dispatch({ type: 'setCities', payload: data });
+        const { data, error } = await supabase.from('cities').select('*');
+
+        if (error) {
+          throw error;
+        }
+
+        dispatch({
+          type: 'setCities',
+          payload: data,
+        });
       } catch {
         dispatch({
           type: 'setError',
@@ -81,15 +91,28 @@ const CityProvider = ({ children }: { children: React.ReactNode }) => {
         });
       }
     }
+
     fetchCities();
   }, []);
 
   async function getCity(id: string) {
     dispatch({ type: 'setIsLoading' });
+
     try {
-      const res = await fetch(`${BASE_URL}/cities/${id}`);
-      const data = await res.json();
-      dispatch({ type: 'setCurrentCity', payload: data });
+      const { data, error } = await supabase
+        .from('cities')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      dispatch({
+        type: 'setCurrentCity',
+        payload: data,
+      });
     } catch {
       dispatch({
         type: 'setError',
@@ -99,32 +122,50 @@ const CityProvider = ({ children }: { children: React.ReactNode }) => {
   }
   async function addNewCity(newCity: NewCity) {
     dispatch({ type: 'setIsLoading' });
-    await fetch(`${BASE_URL}/cities`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newCity),
-    }).then(res => {
-      res.json().then(data => {
-        if (!res.ok)
-          dispatch({ type: 'setError', payload: 'Failed to add city' });
-        dispatch({ type: 'addCity', payload: data });
+
+    try {
+      const { data, error } = await supabase
+        .from('cities')
+        .insert(newCity)
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      dispatch({
+        type: 'addCity',
+        payload: data,
       });
-    });
+    } catch {
+      dispatch({
+        type: 'setError',
+        payload: 'Failed to add city',
+      });
+    }
   }
 
   async function deleteCity(id: string) {
     dispatch({ type: 'setIsLoading' });
-    await fetch(`${BASE_URL}/cities/${id}`, {
-      method: 'DELETE',
-    }).then(res => {
-      res.json().then(() => {
-        if (!res.ok)
-          dispatch({ type: 'setError', payload: 'Failed to delete city' });
-        dispatch({ type: 'deleteCity', payload: id });
+
+    try {
+      const { error } = await supabase.from('cities').delete().eq('id', id);
+
+      if (error) {
+        throw error;
+      }
+
+      dispatch({
+        type: 'deleteCity',
+        payload: id,
       });
-    });
+    } catch {
+      dispatch({
+        type: 'setError',
+        payload: 'Failed to delete city',
+      });
+    }
   }
 
   return (
