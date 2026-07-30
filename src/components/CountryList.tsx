@@ -2,24 +2,15 @@ import styles from './CountryList.module.css';
 import CountryItem from './CountryItem';
 import Message from './Message';
 import Spinner from './Spinner';
+import { useCityContext } from '../contexts/CityContext';
+import type { Country } from '../type';
 
-interface City {
-  id: number;
-  city: string;
-  country: string;
-  emoji: string;
-}
-
-interface Country {
-  country: string;
-  emoji: string;
-}
-
-interface Props {
-  cities: City[];
-  isLoading: boolean;
-}
-export default function CountryList({ cities, isLoading }: Props) {
+// interface Props {
+//   cities: City[];
+//   isLoading: boolean;
+// }
+export default function CountryList() {
+  const { cities, isLoading } = useCityContext();
   if (isLoading) return <Spinner />;
   if (!cities.length)
     return (

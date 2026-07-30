@@ -1,9 +1,6 @@
+import type { Country } from '../type';
 import styles from './CountryItem.module.css';
 import ReactCountryFlag from 'react-country-flag';
-interface Country {
-  emoji: string;
-  country: string;
-}
 
 function CountryItem({ country }: { country: Country }) {
   return (
