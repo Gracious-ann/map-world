@@ -9,11 +9,11 @@ import { useUrlPosition } from '../hooks/useUrlPosition';
 import Message from './Message';
 import { useCityContext } from '../contexts/CityContext';
 
-export function convertToEmoji(countryCode) {
+export function convertToEmoji(countryCode: string) {
   const codePoints = countryCode
     .toUpperCase()
     .split('')
-    .map(char => 127397 + char.charCodeAt());
+    .map((char: string) => 127397 + char.charCodeAt());
   return String.fromCodePoint(...codePoints);
 }
 

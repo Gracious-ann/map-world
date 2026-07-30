@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import AppNav from '../components/AppNav';
 import PageNav from '../components/PageNav';
 import styles from './Homepage.module.css';
 import { useAuth } from '../contexts/FakeAuthContext';

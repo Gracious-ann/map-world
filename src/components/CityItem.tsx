@@ -15,7 +15,7 @@ const formatDate = (date: string | Date | null | undefined): string => {
 
 export default function CityItem({ city }: { city: City }) {
   const { currentCity, deleteCity } = useCityContext();
-  const { cityName, emoji, date, id, position } = city;
+  const { cityName, date, id, position } = city;
   console.log(city);
 
   function handleDelete(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
